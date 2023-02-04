@@ -9,9 +9,9 @@ async function sender(email) {
     },
     from: process.env.USER,
     to: email,
-    subject: "nodemailer test mail",
-    html: "<b>This is bold text</b>",
-    text: "This is text version!",
+    subject: "This is a test confirmation email",
+    html: "<b>If you received this, then GG</b>",
+    text: "some dummy text content",
 
     onError: (e) => console.log(e),
     onSuccess: (i) => {
