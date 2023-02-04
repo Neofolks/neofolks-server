@@ -14,13 +14,15 @@ mongoose.connect(process.env.DATABASE_URL, (err) => {
     err? console.log(err) : console.log("Remote URL OK");
 })
 
-// Coonecting to DB
+// Connecting to DB
 const database = mongoose.connection
 database.on('error', (err) => console.log(err))
 database.on('open', () => console.log("Database connected"))
 
 
 app.use(express.json())
+
+// Create /participants route
 const participantsRouter = require('./routes/participants')
 app.use('/participants', participantsRouter)
 
