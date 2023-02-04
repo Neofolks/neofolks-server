@@ -31,7 +31,7 @@ router.post("/", async (req, res) => {
     console.log("New entry saved: ", participant.name);
 
     // Sending email confirmation on rsvp
-    await sender(req.body.email);
+    await sender(req.body.email, req.body.name);
     res.status(201).json(newParticipant);
   } catch (error) {
     res.status(400).json({ message: error.message });
