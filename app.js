@@ -28,6 +28,6 @@ app.get('/', (req, res) =>{
     res.send("Server online 🤙")
 })
 
-app.listen(3000, async () =>{
+app.listen(process.env.PORT || 3000, async () =>{
     console.log('Server running');
 })
