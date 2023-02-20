@@ -1,10 +1,11 @@
 const express = require("express");
 const router = express.Router();
 const sender = require("../sender");
+const authenticate = require('../auth')
 const participantModel = require("../models/participant");
 
 // Getting all
-router.get("/", async (req, res) => {
+router.get("/", authenticate, async (req, res) => {
   try {
     const allParticipants = await participantModel.find();
     res.json(allParticipants);
@@ -14,7 +15,7 @@ router.get("/", async (req, res) => {
 });
 
 // Getting one
-router.get("/:email", getParticipant, (req, res) => {
+router.get("/:email", authenticate, getParticipant, (req, res) => {
   res.json(res.participant);
 });
 

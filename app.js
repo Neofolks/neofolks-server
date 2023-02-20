@@ -1,9 +1,9 @@
 require('dotenv').config()
 const express = require('express')
+// const authenticate = require('./auth')
 const cors = require('cors')
 const mongoose = require('mongoose')
 mongoose.set('strictQuery', false)
-const nodemailer = require('nodejs-nodemailer-outlook')
 
 // Initializing app
 const app = express()
@@ -19,7 +19,10 @@ const database = mongoose.connection
 database.on('error', (err) => console.log(err))
 database.on('open', () => console.log("Database connected"))
 
+// Middleware for auth
+// app.use(authenticate)
 
+// Middleware to work with json in req/res body
 app.use(express.json())
 
 // Create /participants route
