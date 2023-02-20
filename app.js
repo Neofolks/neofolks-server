@@ -1,6 +1,5 @@
 require('dotenv').config()
 const express = require('express')
-// const authenticate = require('./auth')
 const cors = require('cors')
 const mongoose = require('mongoose')
 mongoose.set('strictQuery', false)
@@ -19,8 +18,6 @@ const database = mongoose.connection
 database.on('error', (err) => console.log(err))
 database.on('open', () => console.log("Database connected"))
 
-// Middleware for auth
-// app.use(authenticate)
 
 // Middleware to work with json in req/res body
 app.use(express.json())
@@ -28,6 +25,10 @@ app.use(express.json())
 // Create /participants route
 const participantsRouter = require('./routes/participants')
 app.use('/participants', participantsRouter)
+
+// Create /teams route
+const teamsRouter = require('./routes/teams')
+app.use('/teams', teamsRouter)
 
 app.get('/', (req, res) =>{
     res.send("Server online 🤙")
