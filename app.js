@@ -3,6 +3,7 @@ const express = require('express')
 const cors = require('cors')
 const mongoose = require('mongoose')
 mongoose.set('strictQuery', false)
+const nodemailer = require('nodejs-nodemailer-outlook')
 
 // Initializing app
 const app = express()
@@ -19,16 +20,11 @@ database.on('error', (err) => console.log(err))
 database.on('open', () => console.log("Database connected"))
 
 
-// Middleware to work with json in req/res body
 app.use(express.json())
 
 // Create /participants route
 const participantsRouter = require('./routes/participants')
 app.use('/participants', participantsRouter)
-
-// Create /teams route
-const teamsRouter = require('./routes/teams')
-app.use('/teams', teamsRouter)
 
 app.get('/', (req, res) =>{
     res.send("Server online 🤙")
