@@ -52,7 +52,17 @@ router.delete("/:team_name", authenticate, getTeam, async (req, res) => {
   }
 });
 
-// middleware to find team using name
+// Deleting all
+router.delete("/", authenticate, async (req, res) => {
+  try {
+    await teamModel.deleteMany();
+    res.json({ message: "Deleted all teams" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Middleware to find team using name
 async function getTeam(req, res, next) {
   let team;
   try {
@@ -67,17 +77,32 @@ async function getTeam(req, res, next) {
   next();
 }
 
-// Function to save team members as individual participants in DB
+// Function to save team members as individual participants in DB and send email
 async function saveParticipants(members, teamName) {
+  // To store emails of all members
+  let allEmails = [];
   members.forEach(async (member) => {
-    let participant = new participantModel({
-      name: member.name,
-      email: member.email,
-      teamName: teamName,
-    });
-    let newParticipant = await participant.save();
-    console.log("New participant added:", newParticipant.name);
+    try {
+      let participant = new participantModel({
+        name: member.name,
+        email: member.email,
+        teamName: teamName,
+      });
+      // Saving each member in 'participants' collection in DB
+      let newParticipant = await participant.save();
+      // Populating 'allEmails'
+      allEmails.push(newParticipant.email);
+      console.log("New participant added:", newParticipant.name);
+    } catch (error) {
+      console.log(error.message);
+      return;
+    }
   });
+  // Popping first email from 'allEmails'
+  let firstEmail = allEmails.shift();
+  // Finally sending confirmation mail to 'firstEmail' and adding remaining 'allEmails' to BCC
+  await sender(firstEmail, allEmails, teamName);
+  return;
 }
 
 module.exports = router;
