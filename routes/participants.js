@@ -1,10 +1,11 @@
 const express = require("express");
 const router = express.Router();
 const sender = require("../sender");
+const authenticate = require("../auth");
 const participantModel = require("../models/participant");
 
 // Getting all
-router.get("/", async (req, res) => {
+router.get("/", authenticate, async (req, res) => {
   try {
     const allParticipants = await participantModel.find();
     res.json(allParticipants);
@@ -14,7 +15,7 @@ router.get("/", async (req, res) => {
 });
 
 // Getting one
-router.get("/:email", getParticipant, (req, res) => {
+router.get("/:email", authenticate, getParticipant, (req, res) => {
   res.json(res.participant);
 });
 
@@ -39,10 +40,20 @@ router.post("/", async (req, res) => {
 });
 
 // Deleting one
-router.delete("/:email", getParticipant, async (req, res) => {
+router.delete("/:email", authenticate, getParticipant, async (req, res) => {
   try {
     await res.participant.remove();
     res.json({ message: "Deleted" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Deleting all
+router.delete("/", authenticate, async (req, res) => {
+  try {
+    await participantModel.deleteMany();
+    res.json({ message: "Deleted all participants" });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
