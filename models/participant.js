@@ -11,6 +11,11 @@ const participantSchema = new mongoose.Schema({
     unique: true,
     lowercase: true,
   },
+  phone: {
+    type: String,
+    required: true,
+    unique: true,
+  },
   teamName: {
     type: String,
   },

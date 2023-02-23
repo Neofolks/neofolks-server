@@ -35,7 +35,6 @@ router.post("/", async (req, res) => {
 
     console.log("New entry saved: ", team.name);
 
-    // await sender(req.body.email, req.body.name);
     res.status(201).json(newTeam);
   } catch (error) {
     res.status(400).json({ message: error.message });
@@ -86,6 +85,7 @@ async function saveParticipants(members, teamName) {
       let participant = new participantModel({
         name: member.name,
         email: member.email,
+        phone: member.phone,
         teamName: teamName,
       });
       // Saving each member in 'participants' collection in DB
