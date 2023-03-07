@@ -1,10 +1,10 @@
-require("dotenv").config;
+require("dotenv").config();
 const QRCode = require("qrcode");
 const jwt = require("jsonwebtoken");
 
 async function generateQR(memberDetails) {
   const signedToken = jwt.sign(JSON.stringify(memberDetails), process.env.JWT_SECRET);
-  QRCode.toFile(`./QRs/${memberDetails._id}.png`, signedToken);
+  QRCode.toFile(`./${memberDetails._id}.png`, signedToken);
 }
 
 // const memberDetails = {
