@@ -63,10 +63,10 @@ const mailgunSender = async (email, name, id) => {
 
   try {
     const timerId = setInterval(() => {
-      const fileExists = fs.existsSync(`./QRs/${id}.png`);
+      const fileExists = fs.existsSync(`./${id}.png`);
       if (fileExists) {
         // Reading file
-        fs.promises.readFile(`./QRs/${id}.png`).then(async (data) => {
+        fs.promises.readFile(`./${id}.png`).then(async (data) => {
           const file = {
             filename: `${name}'s QR.png`,
             data,
@@ -83,7 +83,7 @@ const mailgunSender = async (email, name, id) => {
           const response = await client.messages.create(DOMAIN, messageData);
           console.log(await response.message);
           // Deleting file after sending
-          fs.unlinkSync(`./QRs/${id}.png`);
+          fs.unlinkSync(`./${id}.png`);
         });
         clearInterval(timerId);
       } else {
