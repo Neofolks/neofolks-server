@@ -1,5 +1,9 @@
 require("dotenv").config();
 const nodemailer = require("nodemailer");
+const formData = require("form-data");
+const Mailgun = require("mailgun.js");
+const fs = require("fs");
+const generateQR = require("./generateQR");
 
 // Trying nodemailer instead of nodemailer-outlook
 // To prevent throttling for concurrent connections
@@ -39,4 +43,58 @@ const sender = async (email, bccEmails, teamName) => {
   });
 };
 
-module.exports = sender;
+// Send email using mailgun
+const DOMAIN = "updates.neofolks.live";
+const mailgun = new Mailgun(formData);
+const client = mailgun.client({
+  username: "api",
+  key: process.env.MAILGUN_API_KEY,
+  url: "https://api.eu.mailgun.net",
+});
+
+const mailgunSender = async (email, name, id) => {
+  // const messageData = {
+  //   from: "Ohm Patil <ohm@neofolks.live>",
+  //   to: email,
+  //   // bcc: bccEmails ?? [],
+  //   subject: `Hey ${name}, your RSVP is confirmed!`,
+  //   text: "Testing some Mailgun awesomeness!",
+  // };
+
+  try {
+    const timerId = setInterval(() => {
+      const fileExists = fs.existsSync(`./QRs/${id}.png`);
+      if (fileExists) {
+        // Reading file
+        fs.promises.readFile(`./QRs/${id}.png`).then(async (data) => {
+          const file = {
+            filename: `${name}'s QR.png`,
+            data,
+          };
+          // Creating email params
+          const messageData = {
+            from: "Neofolks <updates@neofolks.live>",
+            to: email,
+            subject: `Hey ${name}, your RSVP is confirmed!`,
+            text: "Testing some Mailgun awesomeness!",
+            attachment: file,
+          };
+          // Sending email
+          const response = await client.messages.create(DOMAIN, messageData);
+          console.log(await response.message);
+          // Deleting file after sending
+          fs.unlinkSync(`./QRs/${id}.png`);
+        });
+        clearInterval(timerId);
+      } else {
+        console.log("File not found");
+        return;
+      }
+    }, 1000);
+  } catch (error) {
+    console.log(error);
+    return;
+  }
+};
+
+module.exports = { mailgunSender, sender };
