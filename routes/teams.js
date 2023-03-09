@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
-const sender = require("../sender");
+const {sender, mailgunSender} = require("../sender");
+const generateQR = require('../generateQR')
 const authenticate = require("../auth");
 const teamModel = require("../models/team");
 const participantModel = require("../models/participant");
@@ -29,13 +30,11 @@ router.post("/", async (req, res) => {
   });
 
   try {
-    // Saving new team to DB
+    // Saving new team to DB and send email
     const newTeam = await team.save();
     saveParticipants(newTeam.members, newTeam.name);
-
     console.log("New entry saved: ", team.name);
 
-    // await sender(req.body.email, req.body.name);
     res.status(201).json(newTeam);
   } catch (error) {
     res.status(400).json({ message: error.message });
@@ -80,28 +79,29 @@ async function getTeam(req, res, next) {
 // Function to save team members as individual participants in DB and send email
 async function saveParticipants(members, teamName) {
   // To store emails of all members
-  let allEmails = [];
   members.forEach(async (member) => {
     try {
       let participant = new participantModel({
         name: member.name,
         email: member.email,
+        phone: member.phone,
         teamName: teamName,
       });
       // Saving each member in 'participants' collection in DB
       let newParticipant = await participant.save();
-      // Populating 'allEmails'
-      allEmails.push(newParticipant.email);
-      console.log("New participant added:", newParticipant.name);
+
+      // Generating unique QR
+      await generateQR(newParticipant)
+      
+      // Sending mail
+      await mailgunSender(newParticipant.email, newParticipant.name, newParticipant._id);
+      console.log("New participant added:", newParticipant.name, `< ${newParticipant.email} >`);
+
     } catch (error) {
       console.log(error.message);
       return;
     }
   });
-  // Popping first email from 'allEmails'
-  let firstEmail = allEmails.shift();
-  // Finally sending confirmation mail to 'firstEmail' and adding remaining 'allEmails' to BCC
-  await sender(firstEmail, allEmails, teamName);
   return;
 }
 

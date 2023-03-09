@@ -1,5 +1,9 @@
 require("dotenv").config();
 const nodemailer = require("nodemailer");
+const formData = require("form-data");
+const Mailgun = require("mailgun.js");
+const fs = require("fs");
+const generateQR = require("./generateQR");
 
 // Trying nodemailer instead of nodemailer-outlook
 // To prevent throttling for concurrent connections
