@@ -72,7 +72,7 @@ const mailgunSender = async (email, name, id) => {
             from: "Neofolks <updates@neofolks.live>",
             to: email,
             subject: `Hey ${name}, your RSVP is confirmed!`,
-            text: "Testing some Mailgun awesomeness!",
+            text: "Thank you for registering! We look forward to seeing you soon. It couldn't have been done without you! We are organizing a 5-day technical event in accordance with NUVYUVA which will consist of various executive talks, workshops, and hackathon at the Navrachana University. A follow-up will soon be provided with a detailed event timeline! Super excited to have you on board with us! Ps: Kindly save the QR for future reference. Regards, Team Neofolks 2023",
             attachment: file,
           };
           // Sending email
