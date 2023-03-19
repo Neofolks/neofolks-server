@@ -2,6 +2,8 @@ require('dotenv').config()
 const express = require('express')
 const cors = require('cors')
 const mongoose = require('mongoose')
+const teamModel = require("./models/team");
+const participantModel = require("./models/participant");
 mongoose.set('strictQuery', false)
 
 // Initializing app
@@ -29,6 +31,13 @@ app.use('/participants', participantsRouter)
 // Create /teams route
 const teamsRouter = require('./routes/teams')
 app.use('/teams', teamsRouter)
+
+// Create /regs route
+app.get('/regs', async (req, res) => {
+    const participantCount = await participantModel.countDocuments()
+    const teamCount = await teamModel.countDocuments()
+    res.send(`Team count: ${teamCount}, Participant count: ${participantCount}`)
+}) 
 
 app.get('/', (req, res) =>{
     res.send("Server online 🤙")
