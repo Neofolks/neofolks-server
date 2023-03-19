@@ -36,7 +36,7 @@ app.use('/teams', teamsRouter)
 app.get('/regs', async (req, res) => {
     const participantCount = await participantModel.countDocuments()
     const teamCount = await teamModel.countDocuments()
-    res.send(`Team count: ${teamCount}, Participant count: ${participantCount}`)
+    res.json({"teamCount": teamCount, "participantCount": participantCount})
 }) 
 
 app.get('/', (req, res) =>{
