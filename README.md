@@ -1,7 +1,7 @@
 
 # Neofolks
 
-- Backend for [Neofolks](neofolks.live)
+- Backend for [Neofolks](https://neofolks.live)
 
 ## About Neofolks
 
